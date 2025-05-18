@@ -134,4 +134,3 @@ if logs:
 else:
     st.info("まだ記録がありません。今日からはじめてみましょう！")
 
-st.write("API KEY 読み込み確認:", os.getenv("OPENROUTER_API_KEY"))
