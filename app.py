@@ -4,14 +4,13 @@ import datetime
 import random
 import uuid
 #from dotenv import load_dotenv
-import openai
+from openai import OpenAI
 from supabase_helper import supabase
 
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
 #load_dotenv()
-openai.api_key = os.getenv("OPENROUTER_API_KEY")
-openai.base_url = "https://openrouter.ai/api/v1"
+client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"))
 
 # -------------------- ユーザー識別 --------------------
 if "user_id" not in st.session_state:
@@ -43,7 +42,7 @@ def get_gpt_reply(entry, goals):
 また、出来事がユーザーの目標に関連していた時には、それに気づいてあげてください。
 """
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
     model="openai/gpt-3.5-turbo",  # openrouterはモデル名に `openai/` をつける
     messages=[{"role": "user", "content": prompt}],
     temperature=0.7,
