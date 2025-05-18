@@ -7,6 +7,8 @@ import uuid
 from openai import OpenAI
 from supabase_helper import supabase
 
+st.write("🔑 OPENAI_API_KEY（最初の5文字）:", os.getenv("OPENAI_API_KEY")[:5])
+
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
 #load_dotenv()
