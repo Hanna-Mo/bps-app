@@ -3,13 +3,13 @@ import os
 import datetime
 import random
 import uuid
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 from openai import OpenAI
 from supabase_helper import supabase
 
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
-load_dotenv()
+#load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # -------------------- ユーザー識別 --------------------
