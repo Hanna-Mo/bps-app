@@ -24,7 +24,7 @@ def get_or_ask_nickname(user_id: str):
             if existing.data:
                 supabase.table("user_profiles").update({"nickname": nickname}).eq("user_id", user_id).execute()
             else:
-                supabase.table("user_profiles").insert({
+                supabase.table("user_profiles").upsert({
                     "user_id": user_id,
                     "nickname": nickname
                 }).execute()
