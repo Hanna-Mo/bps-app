@@ -43,7 +43,7 @@ def get_gpt_reply(entry, goals):
 """
 
     response = client.chat.completions.create(
-    model="openrouter/mistralai/mixtral-8x7b", #"openai/gpt-3.5-turbo",  # openrouterはモデル名に `openai/` をつける
+    model="mistralai/mixtral-8x7b", #"openai/gpt-3.5-turbo",  # openrouterはモデル名に `openai/` をつける
     messages=[{"role": "user", "content": prompt}],
     temperature=0.7,
 )
