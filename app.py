@@ -28,9 +28,20 @@ user_name = st.session_state["user_name"]
 
 # -------------------- GPT応答生成 --------------------
 def get_gpt_reply(entry, goals):
+    # 呼びかけリスト
+    greetings = [
+        "今日も話してくれてありがとう😊✨",
+        "今日も記録できたこと、素晴らしいですね✨",
+        "今日もお疲れ様です😊✨"
+    ]
+    # ランダム選択
+    greeting = random.choice(greetings)
+
     prompt = f"""
 あなたはユーザーをあたたかく励ましたり褒めたりしてくれる優しいチャットボットです。
 堅苦しくなく、やわらかい言葉で話してください。口調はフレンドリーですが丁寧にです・ます調でお願いします。絵文字を使っても構いません。
+ポジティブな出来事を記録するアプリの一部として、ユーザーが今日書いたポジティブな出来事に対して、温かく励ますような言葉や活動に対する労いを自然な言葉で返してください。
+ユーザーの名前は「{user_name}」です。
 以下はユーザーが今日書いたポジティブな出来事です：
 「{entry}」
 また、ユーザーが設定している将来の目標はこちらです：
@@ -39,7 +50,8 @@ def get_gpt_reply(entry, goals):
 人間関係：{goals.get('relationships')}
 その他：{goals.get('others')}
 この出来事に対して、温かく励ますような言葉や労いを自然な文章で1〜2文で返してください。
-また、出来事がユーザーの目標に関連していた時には、それに気づいてあげてください。
+また、出来事がユーザーの目標に関連していた時には、それに気づいてあげてください。目標と記録の関連性を指摘することで、ユーザーのモチベーションを高めるような言葉をかけてあげてください。
+ただし、過剰に出来事と目標の関連性を指摘する必要はありません。
 """
 
     response = client.chat.completions.create(
@@ -83,19 +95,19 @@ goals = load_goals_from_supabase(user_id)
 with st.form("goal_form"):
     st.subheader("1. 身体・心理面の理想")
     st.caption("例：週に1回は運動し、健康的な生活習慣を続けている。柔軟な考えを持ち、人に優しく接することができる。")
-    goals["body_mind"] = st.text_area("", value=goals.get("body_mind", ""), key="body_mind", height=100)
+    goals["body_mind"] = st.text_area("", value=goals.get("body_mind", ""), key="body_mind", height=150)
 
     st.subheader("2. 学業・仕事の理想")
     st.caption("例：統計学をマスターし、どんな解析でも自信を持ってできるようになっている。丁寧で正確に仕事をこなし、周囲から頼られる先輩である。")
-    goals["career"] = st.text_area("", value=goals.get("career", ""), key="career", height=100)
+    goals["career"] = st.text_area("", value=goals.get("career", ""), key="career", height=150)
 
     st.subheader("3. 人間関係の理想")
     st.caption("例：信頼できるパートナーと暮らし、両親ともたまに会って良好な関係を築いている。何らかのコミュニティに参加し、常に新しい人との出会いがある。")
-    goals["relationships"] = st.text_area("", value=goals.get("relationships", ""), key="relationships", height=100)
+    goals["relationships"] = st.text_area("", value=goals.get("relationships", ""), key="relationships", height=150)
 
     st.subheader("4. その他の理想")
     st.caption("例：趣味のバンド活動を続け、たまにライブを開催している。料理が上手で、家族に美味しいご飯を作っている。")
-    goals["others"] = st.text_area("", value=goals.get("others", ""), key="others",height=100)
+    goals["others"] = st.text_area("", value=goals.get("others", ""), key="others",height=150)
 
     if st.form_submit_button("目標を保存する"):
         save_goals_to_supabase(user_id, user_name, goals)
