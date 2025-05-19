@@ -62,7 +62,7 @@ def login_ui():
                     "email": email,
                     "password": password
                 })
-                st.success("登録完了！ログインタブに移動してください📩")
+                st.success("登録したアドレスにメールを送信しました📩\nconfirm your emailを押して登録を完了させてください✨\nその後、ログインすることができます😊👌 ")
             except Exception as e:
                 st.error(f"登録失敗: {e}")
 
