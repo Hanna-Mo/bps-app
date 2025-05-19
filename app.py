@@ -12,8 +12,6 @@ from login import login_ui
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
 #load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1")
-st.write("🔑 APIキー確認:", os.getenv("OPENROUTER_API_KEY")[:10] + "..." if os.getenv("OPENROUTER_API_KEY") else "❌ None!!")
-
 
 # ログインUIを表示し、ユーザー情報を取得
 user = login_ui()
