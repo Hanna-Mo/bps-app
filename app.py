@@ -6,6 +6,15 @@ import uuid
 #from dotenv import load_dotenv
 from openai import OpenAI
 from supabase_helper import supabase
+from login import login_ui
+
+# ログインUIを表示し、ユーザー情報を取得
+user = login_ui()
+
+# Supabase上の一意のユーザーID
+user_id = user.user.id
+user_email = user.user.email
+
 
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
@@ -13,18 +22,18 @@ st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟"
 client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1")
 
 # -------------------- ユーザー識別 --------------------
-if "user_id" not in st.session_state:
-    name = st.text_input("ニックネームを入力してください")
-    if name:
-        st.session_state["user_name"] = name
-        st.session_state["user_id"] = str(uuid.uuid4())
-        st.rerun()
-    else:
-        st.warning("ニックネームを入力してください。")
-        st.stop()
+#if "user_id" not in st.session_state:
+ #   name = st.text_input("ニックネームを入力してください")
+  #  if name:
+   #     st.session_state["user_name"] = name
+    #    st.session_state["user_id"] = str(uuid.uuid4())
+     #   st.rerun()
+#    else:
+ #       st.warning("ニックネームを入力してください。")
+  #      st.stop()
 
-user_id = st.session_state["user_id"]
-user_name = st.session_state["user_name"]
+#user_id = st.session_state["user_id"]
+#user_name = st.session_state["user_name"]
 
 # -------------------- GPT応答生成 --------------------
 def get_gpt_reply(entry, goals):
@@ -65,8 +74,8 @@ def load_goals_from_supabase(user_id):
     else:
         return {"body_mind": "", "career": "", "relationships": "", "others": ""}
 
-def save_goals_to_supabase(user_id, user_name, goals):
-    data = {"user_id": user_id, "user_name": user_name, **goals}
+def save_goals_to_supabase(user_id, goals):
+    data = {"user_id": user_id, **goals}
     existing = supabase.table("goals").select("id").eq("user_id", user_id).execute()
     if existing.data:
         supabase.table("goals").update(data).eq("user_id", user_id).execute()
@@ -74,8 +83,8 @@ def save_goals_to_supabase(user_id, user_name, goals):
         supabase.table("goals").insert(data).execute()
 
 # -------------------- Supabase連携（記録） --------------------
-def save_log_to_supabase(user_id, user_name, date, entry):
-    data = {"user_id": user_id, "user_name": user_name, "date": date, "entry": entry}
+def save_log_to_supabase(user_id, date, entry):
+    data = {"user_id": user_id, "date": date, "entry": entry}
     supabase.table("logs").insert(data).execute()
 
 def load_logs_from_supabase(user_id):
@@ -106,7 +115,7 @@ with st.form("goal_form"):
     goals["others"] = st.text_area("", value=goals.get("others", ""), key="others",height=150)
 
     if st.form_submit_button("目標を保存する"):
-        save_goals_to_supabase(user_id, user_name, goals)
+        save_goals_to_supabase(user_id, goals)
         st.success("✅ 目標を保存しました！")
 
 # -------------------- ポジティブな出来事記録 --------------------
@@ -120,7 +129,7 @@ with st.form("log_form"):
     submitted = st.form_submit_button("記録する")
 
     if submitted and entry:
-        save_log_to_supabase(user_id, user_name, today, entry)
+        save_log_to_supabase(user_id, today, entry)
         gpt_reply = get_gpt_reply(entry, goals)
         st.markdown(f"> {gpt_reply}")
         st.success("✅ 記録を保存しました！")
