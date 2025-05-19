@@ -7,6 +7,7 @@ import uuid
 from openai import OpenAI
 from supabase_helper import supabase
 from login import login_ui
+from nickname import get_or_ask_nickname
 
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
@@ -19,6 +20,7 @@ user = login_ui()
 # Supabase上の一意のユーザーID
 user_id = user.user.id
 user_email = user.user.email
+nickname = get_or_ask_nickname(user_id)
 
 # -------------------- ユーザー識別 --------------------
 #if "user_id" not in st.session_state:
@@ -93,7 +95,7 @@ def load_logs_from_supabase(user_id):
 # -------------------- 目標入力フォーム --------------------
 st.title("🌟 ポジティブ習慣アプリ")
 st.header("🎯 あなたの将来の最も理想的な姿について記入しましょう")
-st.subheader("なるべく具体的に記入しましょう✨\nいくつでも構いません😊 いつでも変更してOKです👌\n変更したら忘れずに保存ボタンを押しましょう👆 変更がなければそのままでOKです✨")
+st.subheader("なるべく具体的に記入しましょう✨\nいくつでも構いません😊 いつでも変更してOKです👌\n\n変更したら忘れずに保存ボタンを押しましょう！")
 goals = load_goals_from_supabase(user_id)
 
 with st.form("goal_form"):
