@@ -12,7 +12,9 @@ from nickname import get_or_ask_nickname
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
 #load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1")
+def get_client():
+    from openai import OpenAI
+    return OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1")
 
 # ログインUIを表示し、ユーザー情報を取得
 user = login_ui()
@@ -35,6 +37,9 @@ nickname = get_or_ask_nickname(user_id)
 
 #user_id = st.session_state["user_id"]
 #user_name = st.session_state["user_name"]
+
+#clientの定義
+client = get_client()
 
 # -------------------- GPT応答生成 --------------------
 def get_gpt_reply(entry, goals):
