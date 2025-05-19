@@ -1,20 +1,29 @@
 # login.py
-
 import streamlit as st
-from supabase import create_client, Client
+from supabase import create_client
 import os
 
-# Supabase 初期化（再利用のため関数の外に置く）
+# Supabase 初期化
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 def login_ui():
-    """
-    Streamlitのログイン／新規登録 UI。
-    ログイン済みの場合はユーザー情報（supabase.auth.user）を返す。
-    未ログイン時はUIを表示してst.stop()。
-    """
+    # ✅ セッション復元（自動ログイン）
+    if "user" not in st.session_state and "session" in st.session_state:
+        try:
+            supabase.auth.set_session(
+                st.session_state["session"]["access_token"],
+                st.session_state["session"]["refresh_token"]
+            )
+            user = supabase.auth.get_user()
+            st.session_state["user"] = user
+            st.success("🔄 セッションから自動ログインしました！")
+            st.rerun()
+        except Exception as e:
+            st.warning("セッション復元に失敗しました…ログインしてください")
+
+    # 🔐 未ログインならログイン／サインアップフォーム表示
     if "user" not in st.session_state:
         st.title("🔐 ログインまたは新規登録")
 
@@ -28,6 +37,7 @@ def login_ui():
                     "password": password
                 })
                 st.session_state["user"] = user
+                st.session_state["session"] = user.session  # ✅ セッション保存！
                 st.success("ログイン成功！")
                 st.rerun()
             except Exception as e:
@@ -35,26 +45,24 @@ def login_ui():
 
         if st.button("新規登録（サインアップ）"):
             try:
-                user = supabase.auth.sign_up({
+                supabase.auth.sign_up({
                     "email": email,
                     "password": password
                 })
-                st.session_state["user"] = user
-                st.success("登録完了！メールを確認してね📩")
-                st.rerun()
+                st.success("登録完了！ログインしてください📩")
+                st.stop()
             except Exception as e:
                 st.error(f"登録失敗: {e}")
 
         st.stop()
 
-    # ログイン済み
+    # 🔓 ログイン済みならユーザー情報を返す
     user = st.session_state["user"]
-    st.success(f"ようこそ！ログイン中です：{user.user.email}")
-    st.write("ユーザーID（ログ保存に使えます）:", user.user.id)
-
+    st.write(f"👋 ログイン中：{user.user.email}")
     if st.button("ログアウト"):
         supabase.auth.sign_out()
-        del st.session_state["user"]
+        for key in ["user", "session"]:
+            st.session_state.pop(key, None)
         st.rerun()
 
-    return user  # ユーザー情報を返す
+    return user
