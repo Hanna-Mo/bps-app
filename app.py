@@ -10,7 +10,7 @@ from supabase_helper import supabase
 # -------------------- 初期設定 --------------------
 st.set_page_config(page_title="ポジティブ習慣アプリ", page_icon="🌟")
 #load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"),base_url="https://openrouter.ai/api/v1")
+client = OpenAI(api_key=os.getenv("OPENROUTER_API_KEY"), base_url="https://openrouter.ai/api/v1")
 
 # -------------------- ユーザー識別 --------------------
 if "user_id" not in st.session_state:
@@ -43,7 +43,7 @@ def get_gpt_reply(entry, goals):
 """
 
     response = client.chat.completions.create(
-    model="openrouter/mistralai/mixtral-8x7b-instruct", #"openai/gpt-3.5-turbo",  # openrouterはモデル名に `openai/` をつける
+    model="openrouter/openai/gpt-3.5-turbo",  # openrouterはモデル名に `openai/` をつける
     messages=[{"role": "user", "content": prompt}],
     temperature=0.7,
 )
